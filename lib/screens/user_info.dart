@@ -45,8 +45,8 @@ class _UserInfoPageState extends State<UserInfoPage> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.logout), onPressed: () {}),
+      floatingActionButton:
+          FloatingActionButton(child: const Icon(Icons.add), onPressed: () {}),
       body: const Center(
         child: Text('Hello!'),
       ),
