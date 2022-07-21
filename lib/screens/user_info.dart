@@ -15,24 +15,27 @@ class UserInfoPage extends StatefulWidget {
 
 class _UserInfoPageState extends State<UserInfoPage> {
   late GoogleMapController mapController;
-  LatLng currentLocation = const LatLng(20.5937, 78.9629);
+  late LatLng? currentLocation = null; //= const LatLng(20.5937, 78.9629);
   User? user;
 
   void _onMapCreated(GoogleMapController googleMapController) {
     mapController = googleMapController;
+
+    //getCurrentLocation();
   }
 
-  void _getCurrentLocation() async {
+  void getCurrentLocation() async {
     Position position = await Location.getGeoLocationPosition();
-
-    currentLocation = LatLng(position.latitude, position.longitude);
+    setState(() {
+      currentLocation = LatLng(position.latitude, position.longitude);
+    });
   }
 
   @override
   void initState() {
-    user = FirebaseAuth.instance.currentUser;
-    _getCurrentLocation();
     super.initState();
+    user = FirebaseAuth.instance.currentUser;
+    getCurrentLocation();
   }
 
   @override
@@ -62,10 +65,15 @@ class _UserInfoPageState extends State<UserInfoPage> {
           ],
         ),
         //floatingActionButton: FloatingActionButton(child: const Icon(Icons.add), onPressed: () {}),
-        body: GoogleMap(
-            onMapCreated: _onMapCreated,
-            myLocationEnabled: true,
-            initialCameraPosition:
-                CameraPosition(target: currentLocation, zoom: 10.0)));
+        body: currentLocation == null
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : GoogleMap(
+                myLocationButtonEnabled: true,
+                onMapCreated: _onMapCreated,
+                myLocationEnabled: true,
+                initialCameraPosition: CameraPosition(
+                    target: currentLocation as LatLng, zoom: 10.0)));
   }
 }
